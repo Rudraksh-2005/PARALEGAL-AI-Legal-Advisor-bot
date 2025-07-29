@@ -3,472 +3,604 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Paralegal AI</title>
+    <title>LegalAI Pro - Your Paralegal Assistant</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #f8fafc;
         }
-        .logo-text {
-            font-family: 'Playfair Display', serif;
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
         }
-        .auth-container {
-            background: linear-gradient(135deg, rgba(30, 64, 175, 0.95) 0%, rgba(59, 130, 246, 0.95) 100%),
-                        url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        
+        .glow-effect {
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
         }
-        .chat-container {
-            display: none;
-            height: calc(100vh - 80px);
-            background-color: #f8fafc;
-            background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%233b82f6' fill-opacity='0.05' fill-rule='evenodd'/%3E%3C/svg%3E");
+        
+        .chat-message {
+            animation: slideIn 0.3s ease-out;
         }
-        .message {
-            max-width: 80%;
-            margin-bottom: 1rem;
-            padding: 0.75rem 1rem;
-            border-radius: 1rem;
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
-        .user-message {
-            background-color: #e2e8f0;
-            margin-left: auto;
-            border-top-right-radius: 0.25rem;
-        }
-        .ai-message {
-            background-color: #dbeafe;
-            margin-right: auto;
-            border-top-left-radius: 0.25rem;
-        }
-        .typing-indicator {
-            display: none;
-        }
-        .typing-indicator span {
-            animation: blink 1.4s infinite both;
-        }
-        .typing-indicator span:nth-child(2) {
-            animation-delay: 0.2s;
-        }
-        .typing-indicator span:nth-child(3) {
-            animation-delay: 0.4s;
-        }
-        @keyframes blink {
-            0% { opacity: 0.1; }
-            20% { opacity: 1; }
-            100% { opacity: 0.1; }
-        }
-        .legal-icon {
+        
+        .file-upload-area {
+            border: 2px dashed #374151;
             transition: all 0.3s ease;
         }
-        .legal-icon:hover {
-            transform: scale(1.05);
+        
+        .file-upload-area:hover {
+            border-color: #3b82f6;
+            background-color: rgba(59, 130, 246, 0.05);
+        }
+        
+        .typing-indicator {
+            animation: pulse 1.5s infinite;
         }
     </style>
 </head>
-<body>
-    <!-- Sign In Page -->
-    <div id="auth-page" class="min-h-screen flex flex-col md:flex-row">
-        <div class="auth-container text-white p-8 md:w-1/2 flex flex-col justify-center items-center">
-            <div class="max-w-md w-full">
-                <div class="flex items-center mb-8 justify-center">
-                    <!-- Paralegal AI Logo -->
-                    <div class="flex flex-col items-center">
-                        <div class="bg-white rounded-full p-3 mb-3 shadow-lg">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-blue-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                                <path d="M12 4v16m-8-8h16M8.5 19.5L15.5 4.5M4.5 15.5L19.5 8.5" />
-                                <circle cx="12" cy="12" r="10" />
-                            </svg>
-                        </div>
-                        <h1 class="text-3xl font-bold logo-text text-center">Paralegal AI</h1>
-                        <p class="text-sm mt-1 opacity-90">Your Legal Assistant</p>
-                    </div>
-                </div>
-                <h2 class="text-2xl font-semibold mb-6 text-center">Expert Legal Guidance</h2>
-                <p class="mb-8 text-center">Get instant answers to your legal questions with our AI-powered paralegal assistant. Sign in to continue.</p>
-                
-                <div class="grid grid-cols-2 gap-4 mb-8">
-                    <div class="bg-white bg-opacity-10 p-4 rounded-lg flex flex-col items-center legal-icon">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 mb-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                            <path d="M12 14l9-5-9-5-9 5 9 5z" />
-                            <path d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" />
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14zm-4 6v-7.5l4-2.222" />
-                        </svg>
-                        <p class="text-sm font-medium">Legal Research</p>
-                    </div>
-                    <div class="bg-white bg-opacity-10 p-4 rounded-lg flex flex-col items-center legal-icon">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 mb-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                        </svg>
-                        <p class="text-sm font-medium">Document Analysis</p>
-                    </div>
-                    <div class="bg-white bg-opacity-10 p-4 rounded-lg flex flex-col items-center legal-icon">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 mb-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                        </svg>
-                        <p class="text-sm font-medium">Case Management</p>
-                    </div>
-                    <div class="bg-white bg-opacity-10 p-4 rounded-lg flex flex-col items-center legal-icon">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 mb-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z" />
-                        </svg>
-                        <p class="text-sm font-medium">Legal Consultation</p>
-                    </div>
-                </div>
+<body class="bg-black text-white min-h-screen">
+    <!-- Navigation -->
+    <nav class="bg-gray-900 border-b border-gray-800 px-6 py-4">
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <!-- Logo SVG -->
+                <svg class="w-10 h-10 text-blue-500" viewBox="0 0 100 100" fill="currentColor">
+                    <rect x="20" y="15" width="60" height="70" rx="5" fill="none" stroke="currentColor" stroke-width="3"/>
+                    <rect x="30" y="25" width="40" height="3" fill="currentColor"/>
+                    <rect x="30" y="35" width="35" height="2" fill="currentColor"/>
+                    <rect x="30" y="42" width="30" height="2" fill="currentColor"/>
+                    <rect x="30" y="49" width="40" height="2" fill="currentColor"/>
+                    <circle cx="75" cy="25" r="8" fill="currentColor"/>
+                    <path d="M71 25 L74 28 L79 21" stroke="white" stroke-width="2" fill="none"/>
+                </svg>
+                <h1 class="text-2xl font-bold text-white">LegalAI Pro</h1>
+            </div>
+            <div class="flex items-center space-x-4">
+                <button id="signInBtn" class="px-4 py-2 text-blue-400 hover:text-blue-300 transition-colors">Sign In</button>
+                <button id="signUpBtn" class="px-6 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors">Sign Up</button>
+                <button id="logoutBtn" class="px-4 py-2 text-red-400 hover:text-red-300 transition-colors hidden">Logout</button>
             </div>
         </div>
+    </nav>
+
+    <!-- Main Container -->
+    <div class="max-w-7xl mx-auto px-6 py-8">
         
-        <div class="p-8 md:w-1/2 flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100">
-            <div class="bg-white p-8 rounded-lg shadow-lg max-w-md w-full">
-                <div class="flex justify-center mb-6">
-                    <!-- Small logo for sign-in form -->
-                    <div class="flex items-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-blue-600 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                            <path d="M12 4v16m-8-8h16M8.5 19.5L15.5 4.5M4.5 15.5L19.5 8.5" />
-                            <circle cx="12" cy="12" r="10" />
-                        </svg>
-                        <h2 class="text-2xl font-bold text-gray-800 logo-text">Paralegal AI</h2>
-                    </div>
-                </div>
-                <h3 class="text-xl font-medium mb-6 text-gray-800 text-center">Sign In to Your Account</h3>
-                <form id="login-form">
-                    <div class="mb-4">
-                        <label for="email" class="block text-gray-700 text-sm font-medium mb-2">Email Address</label>
-                        <input type="email" id="email" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="your@email.com" required>
-                    </div>
-                    <div class="mb-6">
-                        <label for="password" class="block text-gray-700 text-sm font-medium mb-2">Password</label>
-                        <input type="password" id="password" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="••••••••" required>
-                    </div>
-                    <div class="flex items-center justify-between mb-6">
-                        <div class="flex items-center">
-                            <input type="checkbox" id="remember" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
-                            <label for="remember" class="ml-2 block text-sm text-gray-700">Remember me</label>
+        <!-- Welcome/Landing Page -->
+        <div id="landingPage" class="text-center py-20">
+            <div class="gradient-bg rounded-3xl p-12 mb-12">
+                <h2 class="text-5xl font-bold mb-6 bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
+                    Your AI Paralegal Assistant
+                </h2>
+                <p class="text-xl text-gray-300 mb-8 max-w-3xl mx-auto">
+                    Upload legal documents and get instant AI-powered analysis, summaries, and answers to your legal questions. 
+                    Streamline your legal research with cutting-edge artificial intelligence.
+                </p>
+                <div class="flex justify-center space-x-6">
+                    <div class="text-center">
+                        <div class="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z"/>
+                            </svg>
                         </div>
-                        <a href="#" class="text-sm text-blue-600 hover:underline">Forgot password?</a>
+                        <h3 class="font-semibold">Upload Documents</h3>
+                        <p class="text-gray-400 text-sm">PDF, DOC, TXT files</p>
                     </div>
-                    <button type="submit" class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors">Sign In</button>
-                </form>
-                <div class="mt-6 text-center">
-                    <p class="text-sm text-gray-600">Don't have an account? <a href="#" class="text-blue-600 hover:underline">Sign up</a></p>
+                    <div class="text-center">
+                        <div class="w-16 h-16 bg-purple-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                        </div>
+                        <h3 class="font-semibold">AI Analysis</h3>
+                        <p class="text-gray-400 text-sm">Instant processing</p>
+                    </div>
+                    <div class="text-center">
+                        <div class="w-16 h-16 bg-green-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z" clip-rule="evenodd"/>
+                            </svg>
+                        </div>
+                        <h3 class="font-semibold">Ask Questions</h3>
+                        <p class="text-gray-400 text-sm">Get instant answers</p>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <!-- Chat Interface -->
-    <div id="chat-page" class="chat-container">
-        <!-- Header -->
-        <header class="bg-white shadow-sm">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
-                <div class="flex items-center">
-                    <!-- Logo in header -->
-                    <div class="flex items-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-blue-600 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                            <path d="M12 4v16m-8-8h16M8.5 19.5L15.5 4.5M4.5 15.5L19.5 8.5" />
-                            <circle cx="12" cy="12" r="10" />
-                        </svg>
-                        <h1 class="text-xl font-bold text-gray-800 logo-text">Paralegal AI</h1>
+        <!-- Sign Up Form -->
+        <div id="signUpForm" class="hidden max-w-md mx-auto">
+            <div class="bg-gray-900 rounded-2xl p-8 border border-gray-800">
+                <h2 class="text-3xl font-bold text-center mb-8">Create Account</h2>
+                <form class="space-y-6">
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Full Name</label>
+                        <input type="text" class="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Enter your full name">
                     </div>
-                </div>
-                <div class="flex items-center">
-                    <div class="mr-4 text-sm text-gray-600">
-                        <span id="user-email">user@example.com</span>
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Email</label>
+                        <input type="email" class="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Enter your email">
                     </div>
-                    <button id="logout-btn" class="text-gray-600 hover:text-gray-900 flex items-center bg-gray-100 px-3 py-1 rounded-md hover:bg-gray-200 transition-colors">
-                        <span class="mr-2">Logout</span>
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                            <path fill-rule="evenodd" d="M3 3a1 1 0 00-1 1v12a1 1 0 001 1h12a1 1 0 001-1V4a1 1 0 00-1-1H3zm7 4a1 1 0 10-2 0v4a1 1 0 102 0V7zm1 4a1 1 0 102 0V7a1 1 0 10-2 0v4z" clip-rule="evenodd" />
-                        </svg>
-                    </button>
-                </div>
-            </div>
-        </header>
-
-        <!-- Chat Area -->
-        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex flex-col h-full">
-            <div class="bg-white rounded-lg shadow-sm p-4 flex-grow overflow-y-auto mb-4" id="chat-messages">
-                <!-- Welcome Message with legal graphics -->
-                <div class="flex justify-center mb-6">
-                    <div class="bg-blue-50 p-4 rounded-lg max-w-lg text-center">
-                        <div class="flex justify-center mb-3">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-blue-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m-8-8h16M8.5 19.5L15.5 4.5M4.5 15.5L19.5 8.5" />
-                                <circle cx="12" cy="12" r="10" />
-                            </svg>
-                        </div>
-                        <h2 class="text-xl font-bold text-gray-800 logo-text mb-2">Welcome to Paralegal AI</h2>
-                        <p class="text-gray-600 mb-3">Your AI-powered legal assistant is ready to help with your questions.</p>
-                        <div class="flex justify-center space-x-4">
-                            <div class="flex flex-col items-center">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-500 mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                </svg>
-                                <span class="text-xs text-gray-500">Legal Advice</span>
-                            </div>
-                            <div class="flex flex-col items-center">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-500 mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                </svg>
-                                <span class="text-xs text-gray-500">Case Management</span>
-                            </div>
-                            <div class="flex flex-col items-center">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-500 mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                                </svg>
-                                <span class="text-xs text-gray-500">Documents</span>
-                            </div>
-                        </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Password</label>
+                        <input type="password" class="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Create a password">
                     </div>
-                </div>
-
-                <!-- First AI Message -->
-                <div class="message ai-message">
-                    <div class="flex items-start">
-                        <div class="flex-shrink-0 mr-3">
-                            <div class="bg-blue-100 rounded-full p-2">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                                    <path d="M12 4v16m-8-8h16M8.5 19.5L15.5 4.5M4.5 15.5L19.5 8.5" />
-                                    <circle cx="12" cy="12" r="10" />
-                                </svg>
-                            </div>
-                        </div>
-                        <div>
-                            <p class="font-medium text-gray-800 mb-1">Paralegal AI</p>
-                            <p>Hello! I'm your legal assistant powered by Paralegal AI. How can I help you with your legal questions today?</p>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Typing Indicator -->
-                <div class="message ai-message typing-indicator" id="typing-indicator">
-                    <div class="flex items-start">
-                        <div class="flex-shrink-0 mr-3">
-                            <div class="bg-blue-100 rounded-full p-2">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                                    <path d="M12 4v16m-8-8h16M8.5 19.5L15.5 4.5M4.5 15.5L19.5 8.5" />
-                                    <circle cx="12" cy="12" r="10" />
-                                </svg>
-                            </div>
-                        </div>
-                        <div>
-                            <p class="font-medium text-gray-800 mb-1">Paralegal AI</p>
-                            <p>
-                                <span>.</span>
-                                <span>.</span>
-                                <span>.</span>
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Input Area -->
-            <div class="bg-white rounded-lg shadow-sm p-4">
-                <form id="chat-form" class="flex items-center">
-                    <input type="text" id="user-input" class="flex-grow px-4 py-3 border border-gray-300 rounded-l-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Type your legal question here...">
-                    <button type="submit" class="bg-blue-600 text-white px-6 py-3 rounded-r-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors flex items-center">
-                        <span class="mr-2">Send</span>
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                            <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd" />
-                        </svg>
+                    <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 py-3 rounded-lg font-semibold transition-colors glow-effect">
+                        Create Account
                     </button>
                 </form>
-                <div class="mt-2 text-xs text-gray-500 flex items-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
-                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
-                    </svg>
-                    <span>For informational purposes only. Not a substitute for professional legal advice.</span>
+                <p class="text-center text-gray-400 mt-6">
+                    Already have an account? 
+                    <button id="switchToSignIn" class="text-blue-400 hover:text-blue-300">Sign in</button>
+                </p>
+            </div>
+        </div>
+
+        <!-- Sign In Form -->
+        <div id="signInForm" class="hidden max-w-md mx-auto">
+            <div class="bg-gray-900 rounded-2xl p-8 border border-gray-800">
+                <h2 class="text-3xl font-bold text-center mb-8">Welcome Back</h2>
+                <form class="space-y-6">
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Email</label>
+                        <input type="email" class="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Enter your email">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Password</label>
+                        <input type="password" class="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Enter your password">
+                    </div>
+                    <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 py-3 rounded-lg font-semibold transition-colors glow-effect">
+                        Sign In
+                    </button>
+                </form>
+                <p class="text-center text-gray-400 mt-6">
+                    Don't have an account? 
+                    <button id="switchToSignUp" class="text-blue-400 hover:text-blue-300">Sign up</button>
+                </p>
+            </div>
+        </div>
+
+        <!-- Main Dashboard -->
+        <div id="dashboard" class="hidden">
+            <div class="grid lg:grid-cols-3 gap-8">
+                
+                <!-- File Upload Section -->
+                <div class="lg:col-span-1">
+                    <div class="bg-gray-900 rounded-2xl p-6 border border-gray-800">
+                        <h3 class="text-xl font-semibold mb-6 flex items-center">
+                            <svg class="w-6 h-6 mr-2 text-blue-500" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z"/>
+                            </svg>
+                            Upload Document
+                        </h3>
+                        
+                        <div id="fileUploadArea" class="file-upload-area rounded-xl p-8 text-center cursor-pointer mb-4">
+                            <svg class="w-12 h-12 mx-auto mb-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
+                            </svg>
+                            <p class="text-lg font-medium mb-2">Drop your file here</p>
+                            <p class="text-gray-400 text-sm">or click to browse</p>
+                            <p class="text-gray-500 text-xs mt-2">PDF, DOC, DOCX, TXT (Max 10MB)</p>
+                        </div>
+                        
+                        <input type="file" id="fileInput" class="hidden" accept=".pdf,.doc,.docx,.txt">
+                        
+                        <div id="uploadedFile" class="hidden bg-gray-800 rounded-lg p-4 mb-4">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center">
+                                    <svg class="w-8 h-8 text-green-500 mr-3" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                                    </svg>
+                                    <div>
+                                        <p id="fileName" class="font-medium"></p>
+                                        <p id="fileSize" class="text-sm text-gray-400"></p>
+                                    </div>
+                                </div>
+                                <button id="removeFile" class="text-red-400 hover:text-red-300">
+                                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                                    </path>
+                                </svg>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <button id="analyzeBtn" class="w-full bg-purple-600 hover:bg-purple-700 py-3 rounded-lg font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                            Analyze Document
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Chat Interface -->
+                <div class="lg:col-span-2">
+                    <div class="bg-gray-900 rounded-2xl border border-gray-800 h-[600px] flex flex-col">
+                        <div class="p-6 border-b border-gray-800">
+                            <h3 class="text-xl font-semibold flex items-center">
+                                <svg class="w-6 h-6 mr-2 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z" clip-rule="evenodd"/>
+                                </svg>
+                                Legal AI Assistant
+                                <span id="chatStatus" class="ml-auto text-sm text-gray-400">Ready to help</span>
+                            </h3>
+                        </div>
+                        
+                        <div id="chatMessages" class="flex-1 p-6 overflow-y-auto space-y-4">
+                            <div class="chat-message bg-gray-800 rounded-lg p-4 max-w-md">
+                                <div class="flex items-start space-x-3">
+                                    <div class="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center flex-shrink-0">
+                                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                            <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <p class="text-sm text-gray-300">
+                                            Hello! I'm your AI paralegal assistant. Upload a legal document and I'll help you analyze it, answer questions, and provide insights. What would you like to know?
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="p-6 border-t border-gray-800">
+                            <div class="flex space-x-4">
+                                <input 
+                                    type="text" 
+                                    id="chatInput" 
+                                    placeholder="Ask a question about your document..." 
+                                    class="flex-1 px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                    disabled
+                                >
+                                <button 
+                                    id="sendBtn" 
+                                    class="px-6 py-3 bg-blue-600 hover:bg-blue-700 rounded-lg font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                    disabled
+                                >
+                                    Send
+                                </button>
+                            </div>
+                            <p class="text-xs text-gray-500 mt-2">Upload a document first to start asking questions</p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        // Sample responses for demo purposes
-        const sampleResponses = {
-            "contract": "Based on contract law, a valid contract requires offer, acceptance, consideration, and the intention to create legal relations. If any of these elements are missing, the contract may be void or voidable. Would you like me to analyze a specific contract issue?",
-            "eviction": "Eviction procedures vary by jurisdiction, but generally require proper notice to the tenant. In most places, landlords must provide written notice (typically 30, 60, or 90 days) and follow specific legal procedures before evicting a tenant. What specific eviction question do you have?",
-            "copyright": "Copyright protection automatically applies to original works fixed in a tangible medium. Registration with the copyright office provides additional legal benefits and is required before filing an infringement lawsuit. The protection typically lasts for the author's life plus 70 years. How can I help with your copyright concern?",
-            "divorce": "Divorce proceedings typically involve property division, potential spousal support, and if applicable, child custody and support arrangements. Requirements vary by jurisdiction. Most states now offer no-fault divorce options. Would you like information about a specific aspect of divorce law?",
-            "default": "I understand your question. In this demo, I'm providing a simulated response. In a real implementation, this would connect to your backend AI service to provide accurate legal information tailored to your specific question. What other legal topics would you like to explore?"
-        };
+        // State management
+        let currentUser = null;
+        let uploadedDocument = null;
+        let isAnalyzing = false;
 
-        // Login form submission
-        document.getElementById('login-form').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-            
-            // In a real implementation, you would validate credentials with your backend
-            // For demo purposes, we'll just transition to the chat interface
-            document.getElementById('auth-page').style.display = 'none';
-            document.getElementById('chat-page').style.display = 'block';
-            
-            // Display the user's email in the header
-            document.getElementById('user-email').textContent = email;
+        // DOM elements
+        const landingPage = document.getElementById('landingPage');
+        const signUpForm = document.getElementById('signUpForm');
+        const signInForm = document.getElementById('signInForm');
+        const dashboard = document.getElementById('dashboard');
+        const signUpBtn = document.getElementById('signUpBtn');
+        const signInBtn = document.getElementById('signInBtn');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const switchToSignIn = document.getElementById('switchToSignIn');
+        const switchToSignUp = document.getElementById('switchToSignUp');
+        const fileUploadArea = document.getElementById('fileUploadArea');
+        const fileInput = document.getElementById('fileInput');
+        const uploadedFile = document.getElementById('uploadedFile');
+        const fileName = document.getElementById('fileName');
+        const fileSize = document.getElementById('fileSize');
+        const removeFile = document.getElementById('removeFile');
+        const analyzeBtn = document.getElementById('analyzeBtn');
+        const chatMessages = document.getElementById('chatMessages');
+        const chatInput = document.getElementById('chatInput');
+        const sendBtn = document.getElementById('sendBtn');
+        const chatStatus = document.getElementById('chatStatus');
+
+        // Navigation functions
+        function showPage(page) {
+            [landingPage, signUpForm, signInForm, dashboard].forEach(p => p.classList.add('hidden'));
+            page.classList.remove('hidden');
+        }
+
+        function updateNavigation() {
+            if (currentUser) {
+                signUpBtn.classList.add('hidden');
+                signInBtn.classList.add('hidden');
+                logoutBtn.classList.remove('hidden');
+            } else {
+                signUpBtn.classList.remove('hidden');
+                signInBtn.classList.remove('hidden');
+                logoutBtn.classList.add('hidden');
+            }
+        }
+
+        // Event listeners for navigation
+        signUpBtn.addEventListener('click', () => showPage(signUpForm));
+        signInBtn.addEventListener('click', () => showPage(signInForm));
+        switchToSignIn.addEventListener('click', () => showPage(signInForm));
+        switchToSignUp.addEventListener('click', () => showPage(signUpForm));
+        
+        logoutBtn.addEventListener('click', () => {
+            currentUser = null;
+            uploadedDocument = null;
+            updateNavigation();
+            showPage(landingPage);
+            resetChat();
         });
 
-        // Logout button
-        document.getElementById('logout-btn').addEventListener('click', function() {
-            document.getElementById('auth-page').style.display = 'flex';
-            document.getElementById('chat-page').style.display = 'none';
+        // Form submissions
+        signUpForm.querySelector('form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            currentUser = { name: 'User', email: 'user@example.com' };
+            updateNavigation();
+            showPage(dashboard);
+        });
+
+        signInForm.querySelector('form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            currentUser = { name: 'User', email: 'user@example.com' };
+            updateNavigation();
+            showPage(dashboard);
+        });
+
+        // File upload functionality
+        fileUploadArea.addEventListener('click', () => fileInput.click());
+        
+        fileUploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            fileUploadArea.classList.add('border-blue-500', 'bg-blue-900', 'bg-opacity-10');
+        });
+        
+        fileUploadArea.addEventListener('dragleave', () => {
+            fileUploadArea.classList.remove('border-blue-500', 'bg-blue-900', 'bg-opacity-10');
+        });
+        
+        fileUploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            fileUploadArea.classList.remove('border-blue-500', 'bg-blue-900', 'bg-opacity-10');
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                handleFileUpload(files[0]);
+            }
+        });
+
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                handleFileUpload(e.target.files[0]);
+            }
+        });
+
+        function handleFileUpload(file) {
+            const maxSize = 10 * 1024 * 1024; // 10MB
+            const allowedTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'text/plain'];
             
-            // Reset chat messages
-            document.getElementById('chat-messages').innerHTML = `
-                <!-- Welcome Message with legal graphics -->
-                <div class="flex justify-center mb-6">
-                    <div class="bg-blue-50 p-4 rounded-lg max-w-lg text-center">
-                        <div class="flex justify-center mb-3">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-blue-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m-8-8h16M8.5 19.5L15.5 4.5M4.5 15.5L19.5 8.5" />
-                                <circle cx="12" cy="12" r="10" />
+            if (file.size > maxSize) {
+                alert('File size must be less than 10MB');
+                return;
+            }
+            
+            if (!allowedTypes.includes(file.type)) {
+                alert('Please upload a PDF, DOC, DOCX, or TXT file');
+                return;
+            }
+
+            uploadedDocument = file;
+            fileName.textContent = file.name;
+            fileSize.textContent = `${(file.size / 1024 / 1024).toFixed(2)} MB`;
+            
+            fileUploadArea.classList.add('hidden');
+            uploadedFile.classList.remove('hidden');
+            analyzeBtn.disabled = false;
+        }
+
+        removeFile.addEventListener('click', () => {
+            uploadedDocument = null;
+            fileInput.value = '';
+            fileUploadArea.classList.remove('hidden');
+            uploadedFile.classList.add('hidden');
+            analyzeBtn.disabled = true;
+            resetChat();
+        });
+
+        // Document analysis
+        analyzeBtn.addEventListener('click', async () => {
+                if (!uploadedDocument || isAnalyzing) return;
+
+                isAnalyzing = true;
+                analyzeBtn.textContent = 'Analyzing...';
+                analyzeBtn.disabled = true;
+                chatStatus.textContent = 'Uploading and analyzing document...';
+
+                const formData = new FormData();
+                formData.append("file", uploadedDocument);
+
+                try {
+                    const response = await fetch("http://127.0.0.1:8000/upload", {
+                        method: "POST",
+                        body: formData,
+                    });
+
+                    const result = await response.json();
+
+                    if (response.ok) {
+                        chatStatus.textContent = 'Document analyzed - Ready for questions';
+                        chatInput.disabled = false;
+                        sendBtn.disabled = false;
+                        chatInput.placeholder = 'Ask me anything about your document...';
+
+                        addMessage('ai', `✅ Uploaded and analyzed "${uploadedDocument.name}". You can now ask me questions.`);
+                    } else {
+                        chatStatus.textContent = 'Error analyzing document';
+                        alert(result.detail || "Upload failed");
+                    }
+
+                } catch (error) {
+                    console.error(error);
+                    chatStatus.textContent = 'Error connecting to backend';
+                    alert("Upload failed");
+                } finally {
+                    isAnalyzing = false;
+                    analyzeBtn.textContent = 'Re-analyze Document';
+                    analyzeBtn.disabled = false;
+                }
+            });
+
+
+        // Chat functionality
+        function addMessage(sender, message) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'chat-message';
+            
+            if (sender === 'user') {
+                messageDiv.innerHTML = `
+                    <div class="flex justify-end">
+                        <div class="bg-blue-600 rounded-lg p-4 max-w-md">
+                            <p class="text-sm">${message}</p>
+                        </div>
+                    </div>
+                `;
+            } else {
+                messageDiv.innerHTML = `
+                    <div class="bg-gray-800 rounded-lg p-4 max-w-md">
+                        <div class="flex items-start space-x-3">
+                            <div class="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center flex-shrink-0">
+                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <p class="text-sm text-gray-300">${message}</p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function addTypingIndicator() {
+            const typingDiv = document.createElement('div');
+            typingDiv.className = 'chat-message typing-indicator';
+            typingDiv.id = 'typingIndicator';
+            typingDiv.innerHTML = `
+                <div class="bg-gray-800 rounded-lg p-4 max-w-md">
+                    <div class="flex items-start space-x-3">
+                        <div class="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center flex-shrink-0">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                             </svg>
                         </div>
-                        <h2 class="text-xl font-bold text-gray-800 logo-text mb-2">Welcome to Paralegal AI</h2>
-                        <p class="text-gray-600 mb-3">Your AI-powered legal assistant is ready to help with your questions.</p>
-                        <div class="flex justify-center space-x-4">
-                            <div class="flex flex-col items-center">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-500 mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                </svg>
-                                <span class="text-xs text-gray-500">Legal Advice</span>
-                            </div>
-                            <div class="flex flex-col items-center">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-500 mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                </svg>
-                                <span class="text-xs text-gray-500">Case Management</span>
-                            </div>
-                            <div class="flex flex-col items-center">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-500 mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                                </svg>
-                                <span class="text-xs text-gray-500">Documents</span>
-                            </div>
+                        <div class="flex space-x-1">
+                            <div class="w-2 h-2 bg-gray-500 rounded-full animate-bounce"></div>
+                            <div class="w-2 h-2 bg-gray-500 rounded-full animate-bounce" style="animation-delay: 0.1s"></div>
+                            <div class="w-2 h-2 bg-gray-500 rounded-full animate-bounce" style="animation-delay: 0.2s"></div>
                         </div>
                     </div>
                 </div>
+            `;
+            chatMessages.appendChild(typingDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
 
-                <!-- First AI Message -->
-                <div class="message ai-message">
-                    <div class="flex items-start">
-                        <div class="flex-shrink-0 mr-3">
-                            <div class="bg-blue-100 rounded-full p-2">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                                    <path d="M12 4v16m-8-8h16M8.5 19.5L15.5 4.5M4.5 15.5L19.5 8.5" />
-                                    <circle cx="12" cy="12" r="10" />
-                                </svg>
-                            </div>
+        function removeTypingIndicator() {
+            const indicator = document.getElementById('typingIndicator');
+            if (indicator) {
+                indicator.remove();
+            }
+        }
+
+        function generateAIResponse(question) {
+            const responses = [
+                `Based on the document analysis, I found several key points related to your question. The document contains relevant clauses that address this matter specifically in section ${Math.floor(Math.random() * 10) + 1}.`,
+                `According to the legal document you uploaded, this appears to be covered under the terms outlined in the agreement. I can see specific language that relates to your inquiry.`,
+                `The document indicates that this matter is addressed through the provisions established in the contract. There are ${Math.floor(Math.random() * 5) + 2} relevant sections that pertain to your question.`,
+                `From my analysis of the uploaded document, I can identify key legal implications regarding your question. The document structure suggests this is a ${['contract', 'agreement', 'legal brief', 'court filing'][Math.floor(Math.random() * 4)]}.`,
+                `The legal document contains specific clauses that directly address your inquiry. I recommend reviewing sections that discuss liability, terms, and conditions as they relate to your question.`
+            ];
+            
+            return responses[Math.floor(Math.random() * responses.length)];
+        }
+
+        async function sendMessage() {
+            const message = chatInput.value.trim();
+            if (!message || !uploadedDocument) return;
+            
+            addTypingIndicator();
+            chatStatus.textContent = 'AI is thinking...';
+
+            try {
+                const res = await fetch("http://127.0.0.1:8000/query", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ query: message }),
+                });
+
+                const data = await res.json();
+                removeTypingIndicator();
+
+                if (res.ok && data.response) {
+                    addMessage('ai', data.response);
+                    chatStatus.textContent = 'Ready for questions';
+                } else {
+                    addMessage('ai', "⚠️ Error processing your question.");
+                    chatStatus.textContent = 'Error occurred';
+                }
+
+            } catch (err) {
+                console.error(err);
+                removeTypingIndicator();
+                addMessage('ai', "❌ Failed to connect to server.");
+                chatStatus.textContent = 'Server error';
+            }
+
+        }
+
+        sendBtn.addEventListener('click', sendMessage);
+        chatInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+
+        function resetChat() {
+            chatMessages.innerHTML = `
+                <div class="chat-message bg-gray-800 rounded-lg p-4 max-w-md">
+                    <div class="flex items-start space-x-3">
+                        <div class="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center flex-shrink-0">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
                         </div>
                         <div>
-                            <p class="font-medium text-gray-800 mb-1">Paralegal AI</p>
-                            <p>Hello! I'm your legal assistant powered by Paralegal AI. How can I help you with your legal questions today?</p>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Typing Indicator -->
-                <div class="message ai-message typing-indicator" id="typing-indicator">
-                    <div class="flex items-start">
-                        <div class="flex-shrink-0 mr-3">
-                            <div class="bg-blue-100 rounded-full p-2">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                                    <path d="M12 4v16m-8-8h16M8.5 19.5L15.5 4.5M4.5 15.5L19.5 8.5" />
-                                    <circle cx="12" cy="12" r="10" />
-                                </svg>
-                            </div>
-                        </div>
-                        <div>
-                            <p class="font-medium text-gray-800 mb-1">Paralegal AI</p>
-                            <p>
-                                <span>.</span>
-                                <span>.</span>
-                                <span>.</span>
+                            <p class="text-sm text-gray-300">
+                                Hello! I'm your AI paralegal assistant. Upload a legal document and I'll help you analyze it, answer questions, and provide insights. What would you like to know?
                             </p>
                         </div>
                     </div>
                 </div>
             `;
-            
-            // Clear input field
-            document.getElementById('user-input').value = '';
-        });
+            chatInput.disabled = true;
+            sendBtn.disabled = true;
+            chatInput.placeholder = 'Upload a document first to start asking questions';
+            chatStatus.textContent = 'Ready to help';
+        }
 
-        // Chat form submission
-        document.getElementById('chat-form').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const userInput = document.getElementById('user-input').value.trim();
-            if (!userInput) return;
-
-            // Add user message to chat
-            const chatMessages = document.getElementById('chat-messages');
-            chatMessages.innerHTML += `
-                <div class="message user-message">
-                    <div class="flex items-start justify-end">
-                        <div class="text-right">
-                            <p class="font-medium text-gray-800 mb-1">You</p>
-                            <p>${userInput}</p>
-                        </div>
-                        <div class="flex-shrink-0 ml-3">
-                            <div class="bg-gray-200 rounded-full p-2">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-600" viewBox="0 0 20 20" fill="currentColor">
-                                    <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" />
-                                </svg>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `;
-            
-            // Clear input field
-            document.getElementById('user-input').value = '';
-            
-            // Show typing indicator
-            const typingIndicator = document.getElementById('typing-indicator');
-            typingIndicator.style.display = 'block';
-            chatMessages.scrollTop = chatMessages.scrollHeight;
-            
-            fetch("http://127.0.0.1:8000/query", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({ query: userInput })  // send user query
-        })
-        .then(response => response.json())
-        .then(data => {
-            typingIndicator.style.display = 'none';
-
-            const response = data.response || "Sorry, I couldn't understand that. Please try again.";
-
-            chatMessages.innerHTML += `
-                <div class="message ai-message">
-                    <div class="flex items-start">
-                        <div class="flex-shrink-0 mr-3">
-                            <div class="bg-blue-100 rounded-full p-2">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                                    <path d="M12 4v16m-8-8h16M8.5 19.5L15.5 4.5M4.5 15.5L19.5 8.5" />
-                                    <circle cx="12" cy="12" r="10" />
-                                </svg>
-                            </div>
-                        </div>
-                        <div>
-                            <p class="font-medium text-gray-800 mb-1">Paralegal AI</p>
-                            <p>${response}</p>
-                        </div>
-                    </div>
-                </div>
-            `;
-
-            chatMessages.scrollTop = chatMessages.scrollHeight;
-        })
-        .catch(error => {
-            typingIndicator.style.display = 'none';
-            console.error("Error:", error);
-        });
-        });
-
-       
+        // Initialize
+        updateNavigation();
     </script>
-</body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'966bb29236429638',t:'MTc1Mzc4MjQ3NS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
